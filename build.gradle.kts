@@ -36,7 +36,6 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.16")
 
     api("io.github.yangentao:types:[1.0.1,)")
-    api("io.github.yangentao:tag:[1.0.1,)")
     api("io.github.yangentao:httpbasic:[1.0.4,)")
     api("io.github.yangentao:sql:[1.0.0,)")
     api("io.github.yangentao:anno:[1.0.2,)")
