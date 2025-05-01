@@ -220,16 +220,16 @@ private class CondParse(query: String) {
     }
 
 }
-
-fun main() {
-//    val q = "{a|EQ|1,{b|GE|2{, c|eq|4},[a|eq|1, b|ge|2} ] , c|le|3}"
-    testCC(" {a_2-c|in|1|2|3, {b|le|2,c|le|3}, d|ge|5, [e|lt|7,g|ne|8]} ")
-}
-
-private fun testCC(q: String) {
-    println("query: $q ")
-    val c = CondParse(q)
-    val node = c.parse()
-    println(node)
-    println()
-}
+//
+//fun main() {
+////    val q = "{a|EQ|1,{b|GE|2{, c|eq|4},[a|eq|1, b|ge|2} ] , c|le|3}"
+//    testCC(" {a_2-c|in|1|2|3, {b|le|2,c|le|3}, d|ge|5, [e|lt|7,g|ne|8]} ")
+//}
+//
+//private fun testCC(q: String) {
+//    println("query: $q ")
+//    val c = CondParse(q)
+//    val node = c.parse()
+//    println(node)
+//    println()
+//}
