@@ -3,9 +3,9 @@
 package io.github.yangentao.hare.utils
 
 import java.io.File
-import java.util.*
 
-
+@Suppress("DEPRECATION")
+val Thread.isMain: Boolean get() = if (javaVersionInt >= 19) this.threadId() == 1L else this.id == 1L
 
 fun AutoCloseable.closeSafe() {
     try {
@@ -13,11 +13,6 @@ fun AutoCloseable.closeSafe() {
     } catch (_: Throwable) {
     }
 }
-
-
-
-
-
 
 inline fun <R> quiet(block: () -> R): R? {
     try {
@@ -33,16 +28,11 @@ val Throwable.rootError: Throwable
         return this.cause?.rootError ?: this
     }
 
-
-
-
-
-internal fun File.ensureDirs(): File {
+fun File.ensureDirs(): File {
     if (!this.exists()) {
         this.mkdirs()
     }
     return this
 }
-
 
 const val HTML404 = "<!doctype html><html><head><title>test</title></head><body><center>404 No Resource Found!</center></body></html>"

@@ -1,6 +1,38 @@
 package io.github.yangentao.hare.utils
 
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.*
+
+fun String.encodedURL(charset: Charset = Charsets.UTF_8): String {
+    return URLEncoder.encode(this, charset)
+}
+
+val String.encodedURL: String
+    get() {
+        return URLEncoder.encode(this, Charsets.UTF_8)
+    }
+val String.decodedURL: String
+    get() {
+        return URLDecoder.decode(this, Charsets.UTF_8)
+    }
+
+val String.decodedBase64: String
+    get() {
+        if (this.isEmpty()) {
+            return ""
+        }
+        val ba = Base64.getUrlDecoder().decode(this)
+        return String(ba, Charsets.UTF_8)
+    }
+val String.encodedBase64: String
+    get() {
+        if (this.isEmpty()) {
+            return ""
+        }
+        return Base64.getUrlEncoder().encodeToString(this.toByteArray())
+    }
 
 //ignore case NOT equal
 infix fun String?.ine(other: String?): Boolean {
