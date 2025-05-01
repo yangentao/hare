@@ -16,7 +16,7 @@ plugins {
 
 group = "io.github.yangentao"
 
-version = "1.0.10"
+version = "1.0.11"
 val artifactName = "hare"
 val githubLib = "hare"
 val descLib = "Java/Kotlin Annonations."
@@ -51,13 +51,13 @@ tasks.test {
 kotlin {
     jvmToolchain(21)
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_19
+        jvmTarget = JvmTarget.JVM_11
     }
 }
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
-    sourceCompatibility = JavaVersion.VERSION_19
-    targetCompatibility = JavaVersion.VERSION_19
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 mavenPublishing {
