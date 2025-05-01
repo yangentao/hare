@@ -16,7 +16,7 @@ plugins {
 
 group = "io.github.yangentao"
 
-version = "1.0.9"
+version = "1.0.10"
 val artifactName = "hare"
 val githubLib = "hare"
 val descLib = "Java/Kotlin Annonations."
