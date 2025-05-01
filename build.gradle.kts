@@ -23,6 +23,7 @@ val descLib = "Java/Kotlin Annonations."
 
 
 repositories {
+    mavenLocal()
     mavenCentral()
 //    maven("https://app800.cn/maven/repository/public/")
 }

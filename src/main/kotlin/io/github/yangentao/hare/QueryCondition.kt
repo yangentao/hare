@@ -2,17 +2,18 @@
 
 package io.github.yangentao.hare
 
-import io.github.yangentao.hare.utils.ICaseMap
-import io.github.yangentao.hare.utils.ICaseSet
-import io.github.yangentao.hare.utils.toICaseMap
-import io.github.yangentao.hare.utils.toICaseSet
+
 import io.github.yangentao.hare.utils.top
 import io.github.yangentao.sql.BaseModel
 import io.github.yangentao.sql.BaseModelClass
 import io.github.yangentao.sql.clause.*
 import io.github.yangentao.sql.fieldSQL
 import io.github.yangentao.sql.modelFieldSQL
+import io.github.yangentao.types.ICaseMap
+import io.github.yangentao.types.ICaseSet
 import io.github.yangentao.types.decodeValue
+import io.github.yangentao.types.toICaseMap
+import io.github.yangentao.types.toICaseSet
 import java.util.*
 import kotlin.reflect.KProperty
 

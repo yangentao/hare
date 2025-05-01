@@ -7,20 +7,20 @@ import io.github.yangentao.anno.Trim
 import io.github.yangentao.anno.userName
 import io.github.yangentao.hare.actions.Upload
 import io.github.yangentao.hare.feature.accountID
-import io.github.yangentao.hare.utils.ICaseSet
 import io.github.yangentao.hare.utils.bound
-import io.github.yangentao.hare.utils.toICaseSet
 import io.github.yangentao.httpbasic.HttpFileParam
 import io.github.yangentao.kson.JsonResult
 import io.github.yangentao.sql.*
 import io.github.yangentao.sql.clause.*
 import io.github.yangentao.tag.html.HtmlDiv
 import io.github.yangentao.tag.html.HtmlDoc
+import io.github.yangentao.types.ICaseSet
 import io.github.yangentao.types.Prop
 import io.github.yangentao.types.Prop1
 import io.github.yangentao.types.decodeValue
 import io.github.yangentao.types.returnClass
 import io.github.yangentao.types.setPropValue
+import io.github.yangentao.types.toICaseSet
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.hasAnnotation
 

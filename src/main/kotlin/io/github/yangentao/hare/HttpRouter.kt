@@ -9,11 +9,11 @@ import io.github.yangentao.hare.log.loge
 import io.github.yangentao.hare.utils.UriPath
 import io.github.yangentao.hare.utils.firstTyped
 import io.github.yangentao.hare.utils.ine
-import io.github.yangentao.hare.utils.setValue
 import io.github.yangentao.httpbasic.HttpMethod
 import io.github.yangentao.types.isPublic
 import io.github.yangentao.types.ownerObject
 import io.github.yangentao.types.printX
+import io.github.yangentao.types.putValue
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -286,7 +286,7 @@ class TargetRouterAction(val router: HttpRouter, val routePath: UriPath, val act
             val map = m.matchResult(routePath.value)
             if (map != null) {
                 for ((k, v) in map) {
-                    context.paramMap.setValue(k, v)
+                    context.paramMap.putValue(k, v)
                 }
             }
         }

@@ -1,9 +1,9 @@
 package io.github.yangentao.hare
 
 
-import io.github.yangentao.hare.utils.PatternText
 import io.github.yangentao.hare.utils.UriPath
 import io.github.yangentao.hare.utils.ieq
+import io.github.yangentao.types.PatternText
 
 fun interface UriMatch {
     fun match(targetPath: String): Boolean

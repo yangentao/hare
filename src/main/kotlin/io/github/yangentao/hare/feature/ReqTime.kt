@@ -4,11 +4,11 @@ import io.github.yangentao.hare.log.logd
 import io.github.yangentao.anno.ModelField
 import io.github.yangentao.hare.ContextAttributeRequired
 import io.github.yangentao.hare.HttpContext
-import io.github.yangentao.hare.utils.ICaseMap
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.sql.TableModelClass
 import io.github.yangentao.sql.pool.ConnectionName
 import io.github.yangentao.sql.update
+import io.github.yangentao.types.ICaseMap
 import io.github.yangentao.types.format
 
 private var HttpContext.requestStartTime: Long by ContextAttributeRequired(0L)
