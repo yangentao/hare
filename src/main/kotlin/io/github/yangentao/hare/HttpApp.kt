@@ -6,6 +6,7 @@ import io.github.yangentao.config.ConfigMap
 import io.github.yangentao.config.Configs
 import io.github.yangentao.hare.log.configLog4J
 import io.github.yangentao.hare.log.loge
+import io.github.yangentao.hare.log.setGlobalLogger
 import io.github.yangentao.hare.utils.AttrStore
 import io.github.yangentao.hare.utils.Tasks
 import io.github.yangentao.hare.utils.UriPath
@@ -16,6 +17,7 @@ import io.github.yangentao.sql.TableMigrater
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.types.TimeValue
 import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -91,6 +93,7 @@ class HttpApp(
         minePackage: String = "dev.entao",
     ) {
         configLog4J(dirLog, console = console, levelConsole = levelConsole, levelMine = levelMine, levelRoot = levelRoot, minePackage = minePackage)
+        setGlobalLogger(LogManager.getLogger())
     }
 
     fun router(block: RouterConfig.() -> Unit) {
