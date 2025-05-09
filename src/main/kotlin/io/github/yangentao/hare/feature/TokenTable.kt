@@ -3,12 +3,12 @@ package io.github.yangentao.hare.feature
 import io.github.yangentao.anno.Length
 import io.github.yangentao.anno.ModelField
 import io.github.yangentao.hare.utils.JWT
-import io.github.yangentao.hare.utils.TimeValue
-import io.github.yangentao.hare.utils.timeDays
 import io.github.yangentao.kson.KsonObject
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.sql.TableModelClass
 import io.github.yangentao.sql.clause.EQ
+import io.github.yangentao.types.TimeValue
+import io.github.yangentao.types.timeDays
 
 class TokenTable : TableModel() {
 

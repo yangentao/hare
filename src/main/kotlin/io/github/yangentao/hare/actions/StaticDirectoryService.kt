@@ -2,9 +2,8 @@ package io.github.yangentao.hare.actions
 
 import io.github.yangentao.hare.Action
 import io.github.yangentao.hare.HttpContext
-import io.github.yangentao.hare.UriMatch
+import io.github.yangentao.hare.PrefixUriMatch
 import io.github.yangentao.hare.log.logd
-import io.github.yangentao.hare.utils.UriPath
 import io.github.yangentao.httpbasic.HttpStatus
 import io.github.yangentao.httpbasic.httpFile
 import java.io.File
@@ -12,8 +11,9 @@ import java.io.File
 //val st = StaticDirectoryActions(Path.of("/static"), File("static"))
 //router.addMatch(st, st::service)
 //目录服务, 下载, 列表
-class StaticDirectoryService(prefix: String, val localDir: File, val allowListDir: Boolean = false) : UriMatch {
+class StaticDirectoryService(prefix: String, val localDir: File, val allowListDir: Boolean = true) {
     val prefixUri: String = prefix.trim('/')
+    val matcher = PrefixUriMatch(prefixUri)
 
     //检查, 安全,  . 和 ..
     @Action
@@ -43,9 +43,9 @@ class StaticDirectoryService(prefix: String, val localDir: File, val allowListDi
         return HttpStatus.NOT_FOUND
     }
 
-    override fun match(targetPath: String): Boolean {
-        if (prefixUri.isEmpty()) return true
-        logd("static match: ", targetPath, "  -> ", prefixUri)
-        return UriPath(targetPath).hasPrefix(prefixUri)
-    }
+//    override fun match(targetPath: String): Boolean {
+//        if (prefixUri.isEmpty()) return true
+//        logd("static match: ", targetPath, "  -> ", prefixUri)
+//        return UriPath(targetPath).hasPrefix(prefixUri)
+//    }
 }

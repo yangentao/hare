@@ -13,6 +13,10 @@ class EqualMatch(val path: String) : UriMatch {
     override fun match(targetPath: String): Boolean {
         return targetPath ieq path
     }
+
+    override fun toString(): String {
+        return "EqualMatch($path)"
+    }
 }
 
 // PrefixMatch("/static")
@@ -24,7 +28,7 @@ class PrefixUriMatch(val prefixUri: String) : UriMatch {
     }
 
     override fun toString(): String {
-        return "PrefixUriMatch{ prefixUri: $prefixUri}"
+        return "PrefixUriMatch{ $prefixUri}"
     }
 }
 
@@ -37,7 +41,7 @@ class RegexUriMatch(val regex: Regex) : UriMatch {
     }
 
     override fun toString(): String {
-        return "RegexUriMatch{ regex: ${regex.pattern}}"
+        return "RegexUriMatch{ ${regex.pattern}}"
     }
 
 }

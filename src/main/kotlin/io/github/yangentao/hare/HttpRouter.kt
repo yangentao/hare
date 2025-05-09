@@ -5,6 +5,7 @@ package io.github.yangentao.hare
 import io.github.yangentao.anno.Name
 import io.github.yangentao.hare.HttpRouter.Companion.NAME_TRIM_END
 import io.github.yangentao.hare.actions.StaticDirectoryService
+import io.github.yangentao.hare.log.logd
 import io.github.yangentao.hare.log.loge
 import io.github.yangentao.hare.utils.UriPath
 import io.github.yangentao.hare.utils.firstTyped
@@ -50,7 +51,7 @@ class HttpRouter(val prefixPath: String) {
 
     fun staticService(prefix: String, dir: File) {
         val ss = StaticDirectoryService(prefix, dir)
-        staticServiceAction = RouterAction(PrefixUriMatch(prefix), ss::service)
+        staticServiceAction = RouterAction(ss.matcher, ss::service)
         staticService = ss
     }
 
@@ -67,6 +68,7 @@ class HttpRouter(val prefixPath: String) {
     }
 
     private fun addRoute(ra: RouterAction) {
+        logd("Route: ", ra.match, ra.action)
         if (ra.match is EqualMatch) {
             val old = _exactMap.put(ra.match.path, ra)
             if (old != null) {
