@@ -9,7 +9,7 @@ import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.sql.TableMigrater
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.types.TimeValue
-import io.github.yangentao.xlog.loge
+import io.github.yangentao.xlog.*
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -29,6 +29,10 @@ class HttpApp(
     var onAuthFailed: ((HttpContext) -> Boolean)? = null
 
     val attrStore = AttrStore()
+
+    init {
+        XLog.setPrinter(TreePrinter(ConsolePrinter to LevelFilter(LogLevel.ALL), DirPrinter(dirLog, 20, 10) to LevelFilter(LogLevel.DEBUG)))
+    }
 
 //    val addr: String? by attrStore
 

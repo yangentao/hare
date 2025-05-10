@@ -16,7 +16,7 @@ plugins {
 
 group = "io.github.yangentao"
 
-version = "1.0.16"
+version = "1.0.18"
 val artifactName = "hare"
 val githubLib = "hare"
 val descLib = "Java/Kotlin Annonations."
@@ -33,8 +33,8 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib"))
 
-    api("org.apache.logging.log4j:log4j-core:2.24.1")
-    implementation("org.slf4j:slf4j-simple:2.0.16")
+//    api("org.apache.logging.log4j:log4j-core:2.24.1")
+//    implementation("org.slf4j:slf4j-simple:2.0.16")
 
     api("io.github.yangentao:types:[1.0.3,)")
     api("io.github.yangentao:httpbasic:[1.0.4,)")
