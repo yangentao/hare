@@ -1,6 +1,5 @@
 package io.github.yangentao.hare.feature
 
-import io.github.yangentao.hare.log.logd
 import io.github.yangentao.anno.ModelField
 import io.github.yangentao.hare.ContextAttributeRequired
 import io.github.yangentao.hare.HttpContext
@@ -10,6 +9,7 @@ import io.github.yangentao.sql.pool.ConnectionName
 import io.github.yangentao.sql.update
 import io.github.yangentao.types.ICaseMap
 import io.github.yangentao.types.format
+import io.github.yangentao.xlog.logd
 
 private var HttpContext.requestStartTime: Long by ContextAttributeRequired(0L)
 

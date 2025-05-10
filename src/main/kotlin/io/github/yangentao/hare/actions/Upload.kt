@@ -4,7 +4,6 @@
 package io.github.yangentao.hare.actions
 
 
-import io.github.yangentao.hare.log.loge
 import io.github.yangentao.anno.ModelField
 import io.github.yangentao.hare.HttpContext
 import io.github.yangentao.hare.utils.FilePath
@@ -17,6 +16,7 @@ import io.github.yangentao.sql.TableModelClass
 import io.github.yangentao.sql.update
 import io.github.yangentao.types.DAY_MILLS
 import io.github.yangentao.types.Now
+import io.github.yangentao.xlog.loge
 import java.io.File
 import java.sql.Timestamp
 import kotlin.uuid.ExperimentalUuidApi

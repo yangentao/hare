@@ -6,12 +6,12 @@ import io.github.yangentao.hare.Action
 import io.github.yangentao.hare.AfterAction
 import io.github.yangentao.hare.BeforeAction
 import io.github.yangentao.hare.HttpContext
-import io.github.yangentao.hare.log.logd
 import io.github.yangentao.httpbasic.HttpFile
 import io.github.yangentao.httpbasic.HttpFileParam
 import io.github.yangentao.sql.clause.DESC
 import io.github.yangentao.sql.clause.ORDER_BY
 import io.github.yangentao.types.printX
+import io.github.yangentao.xlog.logd
 import java.io.File
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid

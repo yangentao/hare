@@ -4,20 +4,12 @@ package io.github.yangentao.hare
 
 import io.github.yangentao.config.ConfigMap
 import io.github.yangentao.config.Configs
-import io.github.yangentao.hare.log.configLog4J
-import io.github.yangentao.hare.log.loge
-import io.github.yangentao.hare.log.setGlobalLogger
-import io.github.yangentao.hare.utils.AttrStore
-import io.github.yangentao.hare.utils.Tasks
-import io.github.yangentao.hare.utils.UriPath
-import io.github.yangentao.hare.utils.ensureDirs
-import io.github.yangentao.hare.utils.joinPath
+import io.github.yangentao.hare.utils.*
 import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.sql.TableMigrater
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.types.TimeValue
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
+import io.github.yangentao.xlog.loge
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -82,18 +74,6 @@ class HttpApp(
             }
         }
 
-    }
-
-    fun configLog(
-        console: Boolean = true,
-        levelConsole: Level = Level.DEBUG,
-        levelFile: Level = Level.INFO,
-        levelMine: Level = Level.DEBUG,
-        levelRoot: Level = Level.INFO,
-        minePackage: String = "dev.entao",
-    ) {
-        configLog4J(dirLog, console = console, levelConsole = levelConsole, levelMine = levelMine, levelRoot = levelRoot, minePackage = minePackage)
-        setGlobalLogger(LogManager.getLogger())
     }
 
     fun router(block: RouterConfig.() -> Unit) {

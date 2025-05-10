@@ -5,8 +5,6 @@ package io.github.yangentao.hare
 import io.github.yangentao.anno.Name
 import io.github.yangentao.hare.HttpRouter.Companion.NAME_TRIM_END
 import io.github.yangentao.hare.actions.StaticDirectoryService
-import io.github.yangentao.hare.log.logd
-import io.github.yangentao.hare.log.loge
 import io.github.yangentao.hare.utils.UriPath
 import io.github.yangentao.hare.utils.firstTyped
 import io.github.yangentao.hare.utils.ine
@@ -15,6 +13,8 @@ import io.github.yangentao.types.isPublic
 import io.github.yangentao.types.ownerObject
 import io.github.yangentao.types.printX
 import io.github.yangentao.types.putValue
+import io.github.yangentao.xlog.logd
+import io.github.yangentao.xlog.loge
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction

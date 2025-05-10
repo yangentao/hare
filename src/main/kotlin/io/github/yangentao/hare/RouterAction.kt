@@ -2,7 +2,6 @@
 
 package io.github.yangentao.hare
 
-import io.github.yangentao.hare.log.fatal
 import io.github.yangentao.anno.Length
 import io.github.yangentao.anno.SepChar
 import io.github.yangentao.anno.Trim
@@ -174,7 +173,7 @@ private fun prepareParamsMap(context: HttpContext, func: KFunction<*>, inst: Any
     for (param in func.parameters) {
         when (param.kind) {
             KParameter.Kind.INSTANCE, KParameter.Kind.EXTENSION_RECEIVER -> {
-                if (inst == null) fatal("NO instance argument given! $func ")
+                if (inst == null) error("NO instance argument given! $func ")
                 map[param] = inst
             }
 
