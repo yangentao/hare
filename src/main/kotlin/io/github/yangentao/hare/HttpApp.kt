@@ -8,11 +8,13 @@ import io.github.yangentao.hare.utils.*
 import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.sql.TableMigrater
 import io.github.yangentao.sql.TableModel
+import io.github.yangentao.types.MB
 import io.github.yangentao.types.TimeValue
 import io.github.yangentao.xlog.*
 import java.io.File
 import kotlin.reflect.KClass
 
+@Suppress("CanBeParameter")
 class HttpApp(
     val contextPath: String, val name: String, val work: File,
     val dirWeb: File = File(work, "web").ensureDirs(),
@@ -29,9 +31,18 @@ class HttpApp(
     var onAuthFailed: ((HttpContext) -> Boolean)? = null
 
     val attrStore = AttrStore()
+    val taskPool = TaskPool()
 
     init {
-        XLog.setPrinter(TreePrinter(ConsolePrinter to LevelFilter(LogLevel.ALL), DirPrinter(dirLog) to LevelFilter(LogLevel.DEBUG)))
+        val dp = DirPrinter(dirLog, fileSize = MB * 10L, maxDays = 30)
+        val ep = DirPrinter(dirLog, fileSize = MB * 10L, maxDays = 30, baseName = "err")
+        XLog.setPrinter(
+            TreePrinter(
+                ConsolePrinter to LevelFilter(LogLevel.ALL),
+                dp to LevelFilter(LogLevel.DEBUG),
+                ep to LevelFilter(LogLevel.ERROR),
+            )
+        )
     }
 
 //    val addr: String? by attrStore
@@ -51,6 +62,7 @@ class HttpApp(
     }
 
     fun destroy() {
+        taskPool.close()
         onDestory?.invoke()
     }
 
@@ -106,7 +118,7 @@ class HttpApp(
     }
 
     fun every(time: TimeValue, block: () -> Unit) {
-        Tasks.fixedDelay(time, block)
+        taskPool.fixedDelay(time, block)
     }
 
     fun migrate(vararg clses: KClass<out TableModel>) {

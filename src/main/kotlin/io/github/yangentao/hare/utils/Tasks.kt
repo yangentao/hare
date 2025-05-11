@@ -22,13 +22,26 @@ fun startTask(task: Runnable) {
     }
 }
 
-object Tasks {
-    val service: ScheduledExecutorService = Executors.newScheduledThreadPool(4) {
-        Thread(it, "TaskScheduled").apply {
+object Tasks : TaskPool(4)
+
+@Suppress("UNUSED_PARAMETER")
+fun uncaughtException(thread: Thread, ex: Throwable) {
+    loge("uncaughtException: ", thread.name)
+    loge(ex)
+    ex.printStackTrace()
+}
+
+open class TaskPool(val corePoolSize: Int = 4) {
+    val service: ScheduledExecutorService = Executors.newScheduledThreadPool(corePoolSize) {
+        Thread(it, "TaskPool").apply {
             isDaemon = true
             priority = Thread.NORM_PRIORITY
             setUncaughtExceptionHandler(::uncaughtException)
         }
+    }
+
+    fun close() {
+        service.close()
     }
 
     //result = exec. submit(aCallable).get()
@@ -74,9 +87,3 @@ object Tasks {
 
 }
 
-@Suppress("UNUSED_PARAMETER")
-fun uncaughtException(thread: Thread, ex: Throwable) {
-    loge("uncaughtException: ", thread.name)
-    loge(ex)
-    ex.printStackTrace()
-}

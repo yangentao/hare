@@ -4,7 +4,7 @@ import io.github.yangentao.anno.userName
 import kotlin.reflect.KProperty
 
 class AttrStore {
-    val map: java.util.HashMap<String, Any> = HashMap()
+    val map: HashMap<String, Any> = HashMap()
 
     @Suppress("UNCHECKED_CAST")
     fun <T> getAttr(key: String): T? {
