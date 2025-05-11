@@ -31,7 +31,7 @@ class HttpApp(
     val attrStore = AttrStore()
 
     init {
-        XLog.setPrinter(TreePrinter(ConsolePrinter to LevelFilter(LogLevel.ALL), DirPrinter(dirLog, 20, 10) to LevelFilter(LogLevel.DEBUG)))
+        XLog.setPrinter(TreePrinter(ConsolePrinter to LevelFilter(LogLevel.ALL), DirPrinter(dirLog) to LevelFilter(LogLevel.DEBUG)))
     }
 
 //    val addr: String? by attrStore
