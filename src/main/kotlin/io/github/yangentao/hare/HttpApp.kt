@@ -14,15 +14,20 @@ import io.github.yangentao.xlog.*
 import java.io.File
 import kotlin.reflect.KClass
 
+/**
+ * contextPath, start with '/',   "/web"
+ */
 @Suppress("CanBeParameter")
 class HttpApp(
-    val contextPath: String, val name: String, val work: File,
+    contextPath: String, val name: String, val work: File,
     val dirWeb: File = File(work, "web").ensureDirs(),
     val dirData: File = File(work, "data").ensureDirs(),
     val dirUpload: File = File(work, "upload").ensureDirs(),
     val dirConfig: File = File(work, "config").ensureDirs(),
     val dirLog: File = File(work, "log").ensureDirs()
 ) {
+    val contextPath: String = if (contextPath.startsWith('/')) contextPath else "/$contextPath"
+
     val routers: ArrayList<HttpRouter> = ArrayList()
     val webSockets: LinkedHashMap<String, LinkedHashMap<String, KClass<*>>> = LinkedHashMap()
 

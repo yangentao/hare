@@ -51,6 +51,9 @@ fun findAppWorkDirectory(args: Array<String>, workName: String = "work"): File {
             val f = File(p.substring(0, p.length - debugSufix.length), "work")
             if (f.isDirectory) {
                 return f
+            }else{
+                f.mkdirs()
+                return f
             }
         }
     }
