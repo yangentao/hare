@@ -7,7 +7,7 @@ val <T> Array<T>.emptyToNull: Array<T>? get() = if (this.isEmpty()) null else th
 @Suppress("ReplaceIsEmptyWithIfEmpty")
 val <V, T : Collection<V>> T.emptyToNull: T? get() = if (this.isEmpty()) null else this
 
-fun <T> Collection<T>.toArrayList(): java.util.ArrayList<T> {
+fun <T> Collection<T>.toArrayList(): ArrayList<T> {
     return ArrayList(this)
 }
 
