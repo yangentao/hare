@@ -34,7 +34,7 @@ dependencies {
     implementation(kotlin("stdlib"))
 
 
-    implementation("io.github.yangentao:xlog:[1.1.0,)")
+    implementation("io.github.yangentao:xlog:[1.1.1,)")
     implementation("io.github.yangentao:anno:[1.1.0,)")
     implementation("io.github.yangentao:kson:[1.1.6,)")
     implementation("io.github.yangentao:types:[1.1.0,)")

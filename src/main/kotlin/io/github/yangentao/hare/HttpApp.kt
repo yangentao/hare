@@ -29,7 +29,6 @@ class HttpApp(
     val contextPath: String = if (contextPath.startsWith('/')) contextPath else "/$contextPath"
 
     val routers: ArrayList<HttpRouter> = ArrayList()
-    val webSockets: LinkedHashMap<String, LinkedHashMap<String, KClass<*>>> = LinkedHashMap()
 
     var onDestory: (() -> Unit)? = null
     var onError: ((HttpContext, Throwable) -> Boolean)? = null
@@ -109,19 +108,6 @@ class HttpApp(
         r.block()
     }
 
-    fun websocket(uri: String, path: String, cls: KClass<*>) {
-        val m = webSockets.getOrPut(uri) { LinkedHashMap() }
-        m[path] = cls
-    }
-
-    fun websocket(uri: String, block: WebSocketConfig.() -> Unit) {
-        val c = WebSocketConfig(uri).apply(block)
-        val m = webSockets.getOrPut(uri) { LinkedHashMap() }
-        for ((k, v) in c.endpoints) {
-            m[k] = v
-        }
-    }
-
     fun every(time: TimeValue, block: () -> Unit) {
         taskPool.fixedDelay(time, block)
     }
@@ -136,12 +122,6 @@ class HttpApp(
             return Configs.parseFile(configFile) as? ConfigMap
         }
         return null
-    }
-}
-
-class WebSocketConfig(val uri: String, val endpoints: LinkedHashMap<String, KClass<*>> = LinkedHashMap()) {
-    fun endpoint(path: String, cls: KClass<*>) {
-        endpoints[path] = cls
     }
 }
 
