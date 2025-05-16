@@ -43,9 +43,9 @@ class HttpApp(
         val ep = DirPrinter(dirLog, fileSize = MB * 10L, maxDays = 30, baseName = "err")
         XLog.setPrinter(
             TreePrinter(
-                ConsolePrinter to LevelFilter(LogLevel.ALL),
-                dp to LevelFilter(LogLevel.DEBUG),
-                ep to LevelFilter(LogLevel.ERROR),
+                ConsolePrinter,
+                FilterPrinter(dp, LevelFilter(LogLevel.DEBUG)),
+                FilterPrinter(ep, LevelFilter(LogLevel.ERROR)),
             )
         )
     }
@@ -133,7 +133,7 @@ class HttpApp(
     fun loadConfig(): ConfigMap? {
         val configFile: File = File(dirConfig, "config.txt")
         if (configFile.exists()) {
-            return Configs.parseFile(configFile).asMap
+            return Configs.parseFile(configFile) as? ConfigMap
         }
         return null
     }
