@@ -16,7 +16,7 @@ plugins {
 
 group = "io.github.yangentao"
 
-version = "1.1.5"
+version = "1.1.10"
 val artifactName = "hare"
 val githubLib = "hare"
 val descLib = "Java/Kotlin Annonations."
@@ -36,9 +36,9 @@ dependencies {
 
     api("io.github.yangentao:xlog:[1.1.3,)")
     api("io.github.yangentao:anno:[1.1.0,)")
-    api("io.github.yangentao:kson:[1.1.7,)")
-    api("io.github.yangentao:types:[1.1.3,)")
-    api("io.github.yangentao:sql:[1.1.5,)")
+    api("io.github.yangentao:kson:[1.1.8,)")
+    api("io.github.yangentao:types:[1.1.8,)")
+    api("io.github.yangentao:sql:[1.1.10,)")
 
     api("io.github.yangentao:config:[1.1.5,)")
     api("io.github.yangentao:tag:[1.1.0,)")
