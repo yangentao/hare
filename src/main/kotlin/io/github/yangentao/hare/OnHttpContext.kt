@@ -8,6 +8,9 @@ import io.github.yangentao.anno.userName
 import io.github.yangentao.hare.actions.Upload
 import io.github.yangentao.hare.feature.accountID
 import io.github.yangentao.hare.utils.bound
+import io.github.yangentao.hare.utils.limitValue
+import io.github.yangentao.hare.utils.offsetValue
+import io.github.yangentao.hare.utils.tagContext
 import io.github.yangentao.httpbasic.HttpFileParam
 import io.github.yangentao.kson.JsonResult
 import io.github.yangentao.sql.*
@@ -219,49 +222,3 @@ interface OnHttpContext {
         }
 
 }
-
-object HttpAttribute {
-    operator fun <T> getValue(thisRef: OnHttpContext, property: KProperty<*>): T? {
-        return thisRef.context.getAttr(property.userName)
-    }
-
-    operator fun <T : Any> setValue(thisRef: OnHttpContext, property: KProperty<*>, value: T?) {
-        if (value == null) {
-            thisRef.context.removeAttr(property.userName)
-        } else {
-            thisRef.context.putAttr(property.userName, value)
-        }
-    }
-}
-
-class HttpAttributeRequired<T : Any>(val defaultValue: T) {
-    operator fun getValue(thisRef: OnHttpContext, property: KProperty<*>): T {
-        return thisRef.context.getAttr(property.userName) ?: defaultValue
-    }
-
-    operator fun setValue(thisRef: OnHttpContext, property: KProperty<*>, value: T) {
-        thisRef.context.putAttr(property.userName, value)
-    }
-}
-
-object HttpParameter {
-    operator fun <T> getValue(thisRef: OnHttpContext, property: KProperty<*>): T? {
-        val s = thisRef.context.param(property.userName) ?: return null
-        @Suppress("UNCHECKED_CAST")
-        return property.decodeValue(s) as? T
-    }
-}
-
-class HttpParameterRequired<T : Any>(val defaultValue: T) {
-    operator fun getValue(thisRef: OnHttpContext, property: KProperty<*>): T {
-        val s = thisRef.context.param(property.userName) ?: return defaultValue
-        @Suppress("UNCHECKED_CAST")
-        return property.decodeValue(s) as? T ?: defaultValue
-    }
-}
-
-@Name("limit")
-val OnHttpContext.limitValue: Int? by HttpParameter
-
-@Name("offset")
-val OnHttpContext.offsetValue: Int by HttpParameterRequired(0)

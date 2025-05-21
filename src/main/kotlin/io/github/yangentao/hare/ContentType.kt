@@ -12,7 +12,16 @@ class ContentType(mime: String, charsetName: String) {
 
     val contentType: String get() = if (charsetName.isEmpty()) mime else "$mime; charset=$charsetName"
 
-    val charset: Charset get() = if (charsetName.isEmpty()) Charsets.UTF_8 else Charset.forName(charsetName, Charsets.UTF_8) //ISO_8859_1
+    val charset: Charset get() = if (charsetName.isEmpty()) Charsets.UTF_8 else fromName(charsetName, Charsets.UTF_8) //ISO_8859_1
+
+    @Suppress("SameParameterValue")
+    private fun fromName(name: String, fallback: Charset): Charset {
+        try {
+            return Charset.forName(name)
+        } catch (ex: Throwable) {
+            return fallback
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other !is ContentType) return false
@@ -42,3 +51,17 @@ class ContentType(mime: String, charsetName: String) {
         }
     }
 }
+
+object CT {
+    const val HTML_UTF8 = "text/html; charset=utf-8"
+    const val PLAIN_UTF8 = "text/plain; charset=utf-8"
+    const val JSON_UTF8 = "application/json; charset=utf-8"
+    const val XML_UTF8 = "application/xml; charset=utf-8"
+    const val OCTET_STREAM = "application/octet-stream"
+
+    fun build(mime: String, charset: Charset?): String {
+        if (charset == null) return mime
+        return mime + "; charset=" + charset.name()
+    }
+}
+

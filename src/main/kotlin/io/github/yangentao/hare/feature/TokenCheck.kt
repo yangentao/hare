@@ -1,9 +1,10 @@
 package io.github.yangentao.hare.feature
 
-import io.github.yangentao.hare.ContextAttribute
 import io.github.yangentao.hare.HttpContext
 import io.github.yangentao.hare.RouterAction
+import io.github.yangentao.hare.utils.ContextAttributeOr
 import io.github.yangentao.hare.utils.firstTyped
+import io.github.yangentao.hare.utils.ifNotNull
 
 //检查是否登录
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
@@ -12,10 +13,7 @@ annotation class LoginNeed(val types: Array<String> = ["*"])
 
 private const val TOKEN = "token"
 
-inline fun <reified T : Any> T?.ifNotNull(block: (T) -> Unit): T? {
-    if (this != null) block(this)
-    return this
-}
+
 
 val HttpContext.tokenValue: String?
     get() {
@@ -23,9 +21,8 @@ val HttpContext.tokenValue: String?
         this.param("access_token")?.ifNotNull { return it }
         return requestHeader("Authorization")?.substringAfter("Bearer ", "")?.trim()
     }
-var HttpContext.accountID: Long? by ContextAttribute
-val HttpContext.accID: Long get() = accountID!!
-var HttpContext.accountType: String? by ContextAttribute
+var HttpContext.accountID: Long? by ContextAttributeOr
+var HttpContext.accountType: String? by ContextAttributeOr
 
 fun isLoginTypeMatch(anno: LoginNeed, type: String): Boolean {
     return anno.types.any { it == "*" || it == type }
