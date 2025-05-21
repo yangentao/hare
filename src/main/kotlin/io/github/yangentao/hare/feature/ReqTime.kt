@@ -11,7 +11,7 @@ import io.github.yangentao.types.ICaseMap
 import io.github.yangentao.types.format
 import io.github.yangentao.xlog.logd
 
-private var HttpContext.requestStartTime: Long by ContextAttribute(0L)
+private var HttpContext.requestStartTime: Long by ContextAttribute{0L }
 
 object ReqTimeSlice {
     val map = ICaseMap<Int>()
