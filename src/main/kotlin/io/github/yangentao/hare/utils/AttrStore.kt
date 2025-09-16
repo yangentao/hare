@@ -8,6 +8,18 @@ import kotlin.reflect.KProperty
 class AttrStore {
     val map: HashMap<String, Any> = HashMap()
 
+    fun contains(key: String): Boolean {
+        return map.containsKey(key)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Any> getOrPut(key: String, block: () -> T): T {
+        val v = map.getOrPut(key) {
+            block()
+        }
+        return v as T
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String): T {
         return map[key] as T
