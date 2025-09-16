@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.yangentao.hare.utils
 
 import io.github.yangentao.anno.userName
@@ -7,11 +9,11 @@ class AttrStore {
     val map: HashMap<String, Any> = HashMap()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> getAttr(key: String): T? {
-        return map[key] as? T
+    fun <T> get(key: String): T {
+        return map[key] as T
     }
 
-    fun <T : Any> setAttr(key: String, value: T?) {
+    fun <T> set(key: String, value: T) {
         if (value == null) {
             map.remove(key)
         } else {
@@ -20,16 +22,16 @@ class AttrStore {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> removeAttr(key: String): T? {
+    fun <T : Any> remove(key: String): T? {
         return map.remove(key) as? T
     }
 
     @Suppress("UNCHECKED_CAST")
-    operator fun <T> getValue(inst: Any, property: KProperty<*>): T? {
-        return map[property.userName] as? T
+    operator fun <T> getValue(inst: Any, property: KProperty<*>): T {
+        return map[property.userName] as T
     }
 
-    operator fun <T : Any> setValue(inst: Any, property: KProperty<*>, value: T?) {
+    operator fun <T> setValue(inst: Any, property: KProperty<*>, value: T) {
         if (value == null) {
             map.remove(property.userName)
         } else {
