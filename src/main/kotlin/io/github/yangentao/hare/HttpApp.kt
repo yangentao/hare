@@ -10,6 +10,7 @@ import io.github.yangentao.sql.TableMigrater
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.types.MB
 import io.github.yangentao.types.TimeValue
+import io.github.yangentao.types.safe
 import io.github.yangentao.xlog.*
 import java.io.File
 import kotlin.reflect.KClass
@@ -37,6 +38,10 @@ class HttpApp(
     val attrStore = AttrStore()
     val taskPool = TaskPool()
 
+    val cleanList: ArrayList<AppCleaner> = ArrayList()
+    val taskList: ArrayList<AppTask> = ArrayList()
+    val everyMinuteTask: EveryMinuteTask = EveryMinuteTask(this)
+
     init {
         val dp = DirPrinter(dirLog, fileSize = MB * 10L, maxDays = 30)
         val ep = DirPrinter(dirLog, fileSize = MB * 10L, maxDays = 30, baseName = "err")
@@ -47,6 +52,7 @@ class HttpApp(
                 FilterPrinter(ep, LevelFilter(LogLevel.ERROR)),
             )
         )
+        addTask(everyMinuteTask)
     }
 
 //    val addr: String? by attrStore
@@ -67,6 +73,16 @@ class HttpApp(
 
     fun destroy() {
         taskPool.close()
+        for (t in taskList) {
+            safe {
+                t.onDetach()
+            }
+        }
+        for (c in cleanList) {
+            safe {
+                c.run()
+            }
+        }
         onDestory?.invoke()
     }
 
@@ -123,7 +139,37 @@ class HttpApp(
         }
         return null
     }
+
+    fun addCleaner(cleaner: AppCleaner) {
+        this.cleanList += cleaner
+    }
+
+    fun removeCleaner(cleaner: AppCleaner) {
+        this.cleanList.remove(cleaner)
+    }
+
+    fun addTask(task: AppTask) {
+        taskList += task
+        task.onAttach()
+    }
+
+    fun removeTask(task: AppTask) {
+        taskList.remove(task)
+        task.onDetach()
+    }
+
+    fun addHourMinuteTask(task: HourMinuteTask) {
+        everyMinuteTask.add(task)
+    }
+
+    fun removeHourMinuteTask(task: HourMinuteTask) {
+        everyMinuteTask.remove(task)
+    }
 }
 
 @DslMarker
 annotation class AppMarker
+
+interface AppCleaner : Runnable {
+
+}
