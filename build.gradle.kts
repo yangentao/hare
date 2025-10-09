@@ -39,7 +39,7 @@ dependencies {
     api("io.github.yangentao:anno:[2.0.0,)")
     api("io.github.yangentao:kson:[2.0.0,)")
     api("io.github.yangentao:types:[2.0.0,)")
-    api("io.github.yangentao:sql:[2.0.3,)")
+    api("io.github.yangentao:sql:[2.0.5,)")
 
     api("io.github.yangentao:charcode:[2.0.0,)")
     api("io.github.yangentao:config:[2.0.0,)")
