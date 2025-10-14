@@ -38,9 +38,13 @@ val OnLocale.locale: Locale get() = Locale(language, country, variant)
  * }
  */
 class LocaleStrings<T : Any>(private val languages: List<KClass<out T>>, private val defaultLanguage: KClass<out T> = languages.first()) {
-    private val defLang: T by lazy { defaultLanguage.createInstance() }
+    private val defLang: T by lazy { defaultLanguage.inst() }
     private val localeLangList: List<Pair<Locale, KClass<out T>>> = languages.map {
         it.findAnnotation<OnLocale>()!!.locale to it
+    }
+
+    private fun KClass<out T>.inst(): T {
+        return this.objectInstance ?: this.createInstance()
     }
 
     fun of(context: HttpContext): T {
@@ -55,7 +59,8 @@ class LocaleStrings<T : Any>(private val languages: List<KClass<out T>>, private
             for (p in localeLangList) {
                 if (p.first.language == l.language) {
                     if (p.first.country == l.country) {
-                        return p.second.createInstance()
+
+                        return p.second.inst()
                     }
                 }
             }
@@ -64,7 +69,7 @@ class LocaleStrings<T : Any>(private val languages: List<KClass<out T>>, private
             for (p in localeLangList) {
                 if (p.first.language == l.language) {
                     if (p.first.country.isEmpty()) {
-                        return p.second.createInstance()
+                        return p.second.inst()
                     }
                 }
             }

@@ -6,6 +6,7 @@ package io.github.yangentao.hare.actions
 
 import io.github.yangentao.anno.ModelField
 import io.github.yangentao.hare.HttpContext
+import io.github.yangentao.hare.OnHttpContext
 import io.github.yangentao.hare.utils.FilePath
 import io.github.yangentao.hare.utils.ensureDirs
 import io.github.yangentao.hare.utils.md5Value
@@ -132,3 +133,13 @@ class Upload : TableModel() {
     }
 }
 
+context(hc: OnHttpContext)
+fun HttpFile.saveToUpload(subdir: String? = null): Upload? {
+    return Upload.fromHttpFile(this, hc.context.app.dirUpload, subdir ?: "")
+}
+
+context(hc: OnHttpContext)
+fun uploadedFile(ident: String): HttpFile? {
+    val up = Upload.oneByKey(ident) ?: return null
+    return up.toHttpFile(hc.context)
+}
