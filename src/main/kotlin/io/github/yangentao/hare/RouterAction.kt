@@ -28,6 +28,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
@@ -142,7 +143,7 @@ class RouterInterceptor(val action: Function<Unit>) {
 private fun HttpContext.instanceActionGroup(ownerClass: KClass<*>?, ownerObject: Any?): Any? {
     if (ownerObject != null) return ownerObject
     if (ownerClass != null) {
-        val obj: Any = ownerClass.createInstanceX(this) ?: ownerClass.createInstanceX() ?: error("Can not create instance: $ownerClass")
+        val obj: Any = ownerClass.objectInstance ?: ownerClass.tryCreateInstance(this) ?: ownerClass.createInstance()
         return obj
     }
     return null
@@ -209,6 +210,8 @@ private fun prepareParamsMap(context: HttpContext, func: KFunction<*>, inst: Any
 
 class ParameterConverter(val param: KParameter) {
     private val paramClass: KClass<*> = param.type.classifier as KClass<*>
+
+    @Suppress("unused")
     private val isGeneric: Boolean = param.type.isGeneric
     private val firstArgumentClass: KClass<*>? = param.type.firstGenericArgumentClass
     private val secondArgumentClass: KClass<*>? = param.type.secondGenericArgumentClass
