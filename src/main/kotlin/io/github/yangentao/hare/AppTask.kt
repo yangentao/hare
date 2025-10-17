@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.yangentao.hare
 
 import io.github.yangentao.types.DateTime
@@ -48,12 +50,10 @@ class EveryMinuteTask(app: HttpApp) : AppTask(app) {
 
     fun add(task: HourMinuteTask) {
         tasks.add(task)
-        task.onAttach()
     }
 
     fun remove(task: HourMinuteTask) {
         tasks.remove(task)
-        task.onDetach()
     }
 
     override fun onAttach() {
@@ -62,11 +62,6 @@ class EveryMinuteTask(app: HttpApp) : AppTask(app) {
 
     override fun onDetach() {
         super.onDetach()
-        for (t in tasks) {
-            safe {
-                t.onDetach()
-            }
-        }
         tasks.clear()
     }
 
@@ -82,16 +77,25 @@ class EveryMinuteTask(app: HttpApp) : AppTask(app) {
     }
 
     private fun onMinute(hour: Int, minute: Int) {
-        val ls = tasks.filter { (it.hour == hour || it.hour == -1) && it.minute == minute }
+        val ls = tasks.filter { it.match(hour, minute) }
         for (t in ls) {
             safe {
-                t.run()
+                t.callback.run()
             }
         }
     }
 }
 
-abstract class HourMinuteTask(val app: HttpApp, val hour: Int, val minute: Int) : Runnable {
-    abstract fun onAttach()
-    open fun onDetach() {}
+open class HourMinuteTask(val hour: Int, val minute: Int, val callback: Runnable) {
+    open fun match(hour: Int, minute: Int): Boolean {
+        return this.hour == hour && this.minute == minute
+    }
 }
+
+class MinuteTask(minute: Int, callback: Runnable) : HourMinuteTask(-1, minute, callback) {
+    override fun match(hour: Int, minute: Int): Boolean {
+        return this.minute == minute
+    }
+}
+
+class HourTask(hour: Int, callback: Runnable) : HourMinuteTask(hour, 0, callback)

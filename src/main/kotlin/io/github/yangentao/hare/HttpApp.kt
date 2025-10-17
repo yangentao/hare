@@ -4,13 +4,13 @@ package io.github.yangentao.hare
 
 import io.github.yangentao.config.ConfigMap
 import io.github.yangentao.config.Configs
-import io.github.yangentao.hare.utils.*
+import io.github.yangentao.hare.utils.UriPath
+import io.github.yangentao.hare.utils.ensureDirs
+import io.github.yangentao.hare.utils.joinPath
 import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.sql.TableMigrater
 import io.github.yangentao.sql.TableModel
-import io.github.yangentao.types.MB
-import io.github.yangentao.types.TimeValue
-import io.github.yangentao.types.safe
+import io.github.yangentao.types.*
 import io.github.yangentao.xlog.*
 import java.io.File
 import kotlin.reflect.KClass
@@ -164,6 +164,18 @@ class HttpApp(
 
     fun removeHourMinuteTask(task: HourMinuteTask) {
         everyMinuteTask.remove(task)
+    }
+
+    fun atTime(hour: Int, minute: Int, callback: Runnable) {
+        addHourMinuteTask(HourMinuteTask(hour, minute, callback))
+    }
+
+    fun atHour(hour: Int, callback: Runnable) {
+        addHourMinuteTask(HourTask(hour, callback))
+    }
+
+    fun atMinute(minute: Int, callback: Runnable) {
+        addHourMinuteTask(MinuteTask(minute, callback))
     }
 }
 
