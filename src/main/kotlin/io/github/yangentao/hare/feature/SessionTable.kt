@@ -53,6 +53,16 @@ class SessionTable : TableModel() {
             SessionTable.delete(SessionTable::token EQ token)
         }
 
+        fun checkToken(token: String?): SessionTable? {
+            val t = token ?: return null
+            val st = SessionTable.one(SessionTable::token EQ t) ?: return null
+            if (st.expired) {
+                st.deleteByKey()
+                return null
+            }
+            return st
+        }
+
         fun check(token: String): SessionTable? {
             if (token.length != 32) return null
             return SessionTable.one(SessionTable::token EQ token)

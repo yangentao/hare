@@ -23,7 +23,7 @@ val OnLocale.locale: Locale get() = Locale(language, country, variant)
  * }
  *
  * @OnLocale("en")
- * open class LangEn : LangAbs {
+ * object LangEn : LangAbs {
  *     override val hello: String = "Hello"
  * }
  *
@@ -33,12 +33,12 @@ val OnLocale.locale: Locale get() = Locale(language, country, variant)
  * }
  *
  * @OnLocale("zh", "CN")
- * class LangZhCn : LangZh() {
+ * object LangZhCn : LangZh() {
  *     override val hello: String = "你好"
  * }
  */
 class LocaleStrings<T : Any>(private val languages: List<KClass<out T>>, private val defaultLanguage: KClass<out T> = languages.first()) {
-    private val defLang: T by lazy { defaultLanguage.inst() }
+    val defaultLang: T by lazy { defaultLanguage.inst() }
     private val localeLangList: List<Pair<Locale, KClass<out T>>> = languages.map {
         it.findAnnotation<OnLocale>()!!.locale to it
     }
@@ -48,18 +48,22 @@ class LocaleStrings<T : Any>(private val languages: List<KClass<out T>>, private
     }
 
     fun of(context: HttpContext): T {
-        val al = context.requestHeader("Accept-Language") ?: return defLang
+        val al = context.requestHeader("Accept-Language") ?: return defaultLang
         val list = parseAcceptLanguage(al)
         return find(list)
     }
 
+    fun find(locale: Locale?): T {
+        if (locale == null) return defaultLang
+        return find(listOf(locale))
+    }
+
     fun find(list: List<Locale>): T {
-        if (list.isEmpty()) return defLang
+        if (list.isEmpty()) return defaultLang
         for (l in list) {
             for (p in localeLangList) {
                 if (p.first.language == l.language) {
                     if (p.first.country == l.country) {
-
                         return p.second.inst()
                     }
                 }
@@ -74,7 +78,7 @@ class LocaleStrings<T : Any>(private val languages: List<KClass<out T>>, private
                 }
             }
         }
-        return defLang
+        return defaultLang
     }
 
     @Suppress("DEPRECATION")
