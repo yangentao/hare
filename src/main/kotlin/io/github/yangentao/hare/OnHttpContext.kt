@@ -2,30 +2,18 @@
 
 package io.github.yangentao.hare
 
-import io.github.yangentao.anno.Name
 import io.github.yangentao.anno.Trim
 import io.github.yangentao.anno.userName
 import io.github.yangentao.hare.actions.Upload
 import io.github.yangentao.hare.feature.accountID
-import io.github.yangentao.hare.utils.bound
-import io.github.yangentao.hare.utils.limitValue
-import io.github.yangentao.hare.utils.offsetValue
-import io.github.yangentao.hare.utils.queryConditions
-import io.github.yangentao.hare.utils.tagContext
+import io.github.yangentao.hare.utils.*
 import io.github.yangentao.httpbasic.HttpFileParam
 import io.github.yangentao.kson.JsonResult
 import io.github.yangentao.sql.*
 import io.github.yangentao.sql.clause.*
 import io.github.yangentao.tag.html.HtmlDiv
 import io.github.yangentao.tag.html.HtmlDoc
-import io.github.yangentao.types.ICaseSet
-import io.github.yangentao.types.Prop
-import io.github.yangentao.types.Prop1
-import io.github.yangentao.types.decodeValue
-import io.github.yangentao.types.returnClass
-import io.github.yangentao.types.setPropValue
-import io.github.yangentao.types.toICaseSet
-import kotlin.reflect.KProperty
+import io.github.yangentao.types.*
 import kotlin.reflect.full.hasAnnotation
 
 interface OnHttpContext {
@@ -117,9 +105,9 @@ interface OnHttpContext {
         thisModel::class.propertiesHare.forEach {
             val key = it.userName
             val b = if (keySet.isNotEmpty()) {
-                context.paramMap.contains(key) && key in keySet
+                context.hasParam(key) && key in keySet
             } else {
-                context.paramMap.contains(key)
+                context.hasParam(key)
             }
             if (b) {
                 val sval = context.param(key)

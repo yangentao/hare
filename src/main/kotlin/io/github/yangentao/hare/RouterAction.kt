@@ -169,7 +169,7 @@ private fun prepareParamsMap(context: HttpContext, func: KFunction<*>, inst: Any
         if (p.isOptional) {
             return
         }
-        error("参数缺失: param: ${p.name}, $p,\n action: $func, \n uri: ${context.requestUri}\n paramMap: ${context.paramMap.entries.joinToString(";") { it.key + "=" + it.value }}")
+        error("参数缺失: param: ${p.name}, $p,\n action: $func, \n uri: ${context.requestUri}\n paramMap: ${context.requestParameters.entries.joinToString(";") { it.key + "=" + it.value }}")
     }
     for (param in func.parameters) {
         when (param.kind) {

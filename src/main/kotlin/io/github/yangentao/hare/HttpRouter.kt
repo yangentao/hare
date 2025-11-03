@@ -288,7 +288,7 @@ class TargetRouterAction(val router: HttpRouter, val routePath: UriPath, val act
             val map = m.matchResult(routePath.value)
             if (map != null) {
                 for ((k, v) in map) {
-                    context.paramMap.putValue(k, v)
+                    context.requestParameters.putValue(k, v)
                 }
             }
         }

@@ -7,12 +7,22 @@ import io.github.yangentao.httpbasic.*
 import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.kson.JsonResult
 import io.github.yangentao.types.ICaseListMap
+import io.github.yangentao.types.ICaseMap
 import io.github.yangentao.types.firstValue
 import io.github.yangentao.types.listValue
 import java.io.File
 
 //TODO 处理action直接返回错误码, 比如 404
 abstract class HttpContext() {
+    val requestHeaders: ICaseMap<String> = ICaseMap()
+    val requestParameters: ICaseListMap<String> = ICaseListMap()
+    val fileUploads: ArrayList<HttpFileParam> = ArrayList()
+
+    //用于模块之间传递信息
+    val attributes: HashMap<String, Any> = HashMap()
+    private val cleanList: ArrayList<() -> Unit> = ArrayList()
+    val timeMill: Long = System.currentTimeMillis()
+
     abstract val app: HttpApp
     abstract val requestUri: String
     abstract val queryString: String?
@@ -21,7 +31,7 @@ abstract class HttpContext() {
     abstract val method: String
     abstract val removeAddress: String
     abstract val requestContent: ByteArray?
-    abstract fun requestHeader(name: String): String?
+    fun requestHeader(name: String): String? = requestHeaders[name];
     abstract fun responseHeader(name: String, value: Any)
     abstract fun send(result: HttpResult)
     abstract fun sendError(status: HttpStatus)
@@ -38,19 +48,6 @@ abstract class HttpContext() {
         get() {
             return app.dirUpload
         }
-
-    val paramMap: ICaseListMap<String> = ICaseListMap()
-
-    val fileUploads: ArrayList<HttpFileParam> = ArrayList()
-
-    //用于模块之间传递信息
-    val attributes: HashMap<String, Any> = HashMap()
-
-    private val cleanList: ArrayList<() -> Unit> = ArrayList()
-
-//    val requestContent: ByteArray? by lazy { request.content().bytesCopy }
-
-    val timeMill: Long = System.currentTimeMillis()
 
     fun onAuthFailed(action: RouterAction) {
         sendResult(JsonFailed("未登录", code = 401))
@@ -94,12 +91,16 @@ abstract class HttpContext() {
         return this.fileUploads.firstOrNull { it.name ieq name }
     }
 
+    fun hasParam(name: String): Boolean {
+        return requestParameters.containsKey(name)
+    }
+
     fun param(name: String): String? {
-        return paramMap.firstValue(name)
+        return requestParameters.firstValue(name)
     }
 
     fun paramList(key: String): List<String> {
-        return paramMap.listValue(key)
+        return requestParameters.listValue(key)
     }
 
     //----------
