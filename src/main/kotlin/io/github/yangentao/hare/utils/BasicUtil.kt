@@ -19,11 +19,6 @@ val NoPermission: JsonResult get() = JsonFailed("无权限", 403)
 @Deprecated("Do not use JsonResult. use HttpResult instead")
 val BadValue: JsonResult get() = JsonFailed("无效数据")
 
-inline fun <reified T : Any> T?.ifNotNull(block: (T) -> Unit): T? {
-    if (this != null) block(this)
-    return this
-}
-
 @Name("limit")
 val OnHttpContext.limitValue: Int? by HttpParameterOr
 

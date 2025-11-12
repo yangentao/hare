@@ -4,21 +4,18 @@ import io.github.yangentao.hare.ContextAttributeOr
 import io.github.yangentao.hare.HttpContext
 import io.github.yangentao.hare.RouterAction
 import io.github.yangentao.hare.utils.firstTyped
-import io.github.yangentao.hare.utils.ifNotNull
 
 //检查是否登录
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class LoginNeed(val types: Array<String> = ["*"])
 
-private const val TOKEN = "token"
-
-
-
 val HttpContext.tokenValue: String?
     get() {
-        this.param(TOKEN)?.ifNotNull { return it }
-        this.param("access_token")?.ifNotNull { return it }
+        this.param("access_token")?.also { return it }
+        this.param("token")?.also { return it }
+        this.requestHeader("access_token")?.also { return it }
+        this.requestHeader("token")?.also { return it }
         return requestHeader("Authorization")?.substringAfter("Bearer ", "")?.trim()
     }
 var HttpContext.accountID: Long? by ContextAttributeOr
