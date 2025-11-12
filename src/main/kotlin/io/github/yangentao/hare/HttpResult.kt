@@ -29,20 +29,19 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
         const val E_CODE: String = "E_CODE"
         const val E_MESSAGE: String = "E_MESSAGE"
 
-        fun errorX(codeMessage: CodeMessage, data: Any? = null, status: HttpStatus = HttpStatus.BAD_REQUEST): HttpResult {
-            return errorX(codeMessage.message, codeMessage.code, data, status)
+        fun errorX(codeMessage: CodeMessage, status: HttpStatus = statusByECode(codeMessage.code), data: Any? = null): HttpResult {
+            return errorX(codeMessage.message, codeMessage.code, status, data)
         }
 
-        fun errorX(message: String, code: Int = -1, data: Any? = null, status: HttpStatus = HttpStatus.BAD_REQUEST): HttpResult {
+        fun errorX(message: String, code: Int = -1, status: HttpStatus = statusByECode(code), data: Any? = null): HttpResult {
             val bytes: ByteArray? = when (data) {
                 null, Unit -> null
                 is String -> data.toByteArray()
                 is Number, is Boolean -> data.toString().toByteArray()
-                is CodeException -> data.toString().toByteArray()
-                is Throwable -> {
-                    (data.toString() + "\n" + data.stackTraceToString()).toByteArray()
-                }
-
+                is StatusException -> (data.code.toString() + "," + data.message).toByteArray()
+                is Throwable -> (data.toString() + "\n" + data.stackTraceToString()).toByteArray()
+                is KsonValue -> data.toString().toByteArray()
+                is TableModel -> data.toJson().toString().toByteArray()
                 else -> data.toString().toByteArray()
             }
             val msg = message.lines().joinToString(", ")
@@ -96,7 +95,7 @@ val HttpStatus.success get() = this.code in 200..299
 
 fun HttpStatus.error(message: String, code: Int = -1, data: Any? = null): HttpResult {
     assert(!this.success)
-    return HttpResult.errorX(message = message, code = code, data = data, status = this)
+    return HttpResult.errorX(message = message, code = code, status = this, data = data)
 }
 
 class CodeMessage(val code: Int, val message: String) {

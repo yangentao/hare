@@ -3,7 +3,7 @@
 package io.github.yangentao.hare
 
 import io.github.yangentao.anno.userName
-import io.github.yangentao.kson.JsonResult
+import io.github.yangentao.httpbasic.HttpStatus
 import io.github.yangentao.types.decodeValue
 import kotlin.reflect.KProperty
 
@@ -12,18 +12,19 @@ class FileRange(val start: Long, val end: Long) {
     val size: Long get() = end - start + 1
 }
 
-class CodeException(val code: Int, message: String) : Exception(message) {
+class StatusException(message: String, val code: Int = -1, val status: HttpStatus = statusByECode(code), val data: Any? = null) : Exception(message) {
     override fun toString(): String {
         return "$code , $message"
     }
 }
 
-fun errorCode(message: String, code: Int = -1): Nothing {
-    throw CodeException(code, message)
+fun errorStatus(message: String, code: Int = -1, status: HttpStatus? = null, data: Any? = null): Nothing {
+    throw StatusException(message, code, status ?: statusByECode(code), data)
 }
 
-class NetClientError(message: String?, cause: Throwable?, val result: JsonResult? = null) : Exception(message, cause)
-class NetServerError(message: String?, cause: Throwable?) : Exception(message, cause)
+fun statusByECode(code: Int): HttpStatus {
+    return if (code in 400..599) HttpStatus.valueOf(code) else HttpStatus.BAD_REQUEST
+}
 
 object ContextAttributeOr {
     operator fun <T : Any> getValue(thisRef: HttpContext, property: KProperty<*>): T? {

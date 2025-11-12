@@ -36,7 +36,14 @@ typealias LambdaAction = Function1<HttpContext, Any?>
 // RouterAction与RouterInterceptor的区别是返回值
 // lambda, fun(context:HttpContext):Any? {}
 // kfunction, 可以返回任意值.  fun(context:HttpContext, a:X, b:Y, ...):Any? {}
-class RouterAction(val match: UriMatch, val action: Function<Any?>, val beforeList: List<KFunction<*>> = emptyList(), val afterList: List<KFunction<*>> = emptyList(), val group: KClass<*>? = null) {
+@Suppress("CanBeParameter")
+class RouterAction(
+    val match: UriMatch,
+    val action: Function<Any?>,
+    val beforeList: List<KFunction<*>> = emptyList(),
+    val afterList: List<KFunction<*>> = emptyList(),
+    val group: KClass<*>? = null
+) {
     val isKFunction: Boolean = action is KFunction<*>
     val lambda: LambdaAction?
 
@@ -155,11 +162,11 @@ private fun invokeKFunction(context: HttpContext, kfun: KFunction<*>, inst: Any?
     val map = prepareParamsMap(context, kfun, inst, classValueMap)
     try {
         return kfun.callBy(map)
-    } catch (e: CodeException) {
-        return HttpResult.errorX(e.message!!, code = e.code, status = HttpStatus.INTERNAL_SERVER_ERROR)
+    } catch (e: StatusException) {
+        return HttpResult.errorX(e.message!!, code = e.code, status = e.status, data = e.data)
     } catch (e: Throwable) {
         e.printStackTrace()
-        return HttpResult.errorX(e.rootMessage, code = -1, data = e, status = HttpStatus.INTERNAL_SERVER_ERROR)
+        return HttpResult.errorX(e.rootMessage, code = -1, status = HttpStatus.INTERNAL_SERVER_ERROR, data = e)
     }
 }
 

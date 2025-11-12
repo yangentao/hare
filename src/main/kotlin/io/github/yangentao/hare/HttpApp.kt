@@ -7,7 +7,6 @@ import io.github.yangentao.config.Configs
 import io.github.yangentao.hare.utils.UriPath
 import io.github.yangentao.hare.utils.ensureDirs
 import io.github.yangentao.hare.utils.joinPath
-import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.sql.TableMigrater
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.types.*
@@ -89,27 +88,8 @@ class HttpApp(
     fun error(context: HttpContext, e: Throwable) {
         loge(e)
         if (true == onError?.invoke(context, e)) return
-        when (e) {
-            is NetClientError -> {
-                if (e.result != null) {
-                    context.sendJson(e.result.toString())
-                } else {
-                    context.sendJson(JsonFailed(e.message ?: "client error").toString())
-                }
-            }
-
-            is NetServerError -> {
-                e.printStackTrace()
-                context.sendError500(e)
-                loge(e)
-            }
-
-            else -> {
-                e.printStackTrace()
-                context.sendError500(e)
-            }
-        }
-
+        e.printStackTrace()
+        context.sendError500(e)
     }
 
     fun router(block: RouterConfig.() -> Unit) {

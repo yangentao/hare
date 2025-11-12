@@ -4,7 +4,6 @@ package io.github.yangentao.hare
 
 import io.github.yangentao.hare.utils.*
 import io.github.yangentao.httpbasic.*
-import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.kson.JsonResult
 import io.github.yangentao.types.ICaseListMap
 import io.github.yangentao.types.ICaseMap
@@ -34,6 +33,8 @@ abstract class HttpContext() {
     fun requestHeader(name: String): String? = requestHeaders[name];
     abstract fun responseHeader(name: String, value: Any)
     abstract fun send(result: HttpResult)
+
+    // send error page!
     abstract fun sendError(status: HttpStatus)
 
     abstract fun sendFile(httpFile: HttpFile, attachment: Boolean)
@@ -50,17 +51,7 @@ abstract class HttpContext() {
         }
 
     fun onAuthFailed(action: RouterAction) {
-        sendResult(JsonFailed("未登录", code = 401))
-    }
-
-    @Deprecated("use errorCode() instead")
-    fun errorClient(result: JsonResult? = null, message: String? = null, cause: Throwable? = null): Nothing {
-        throw NetClientError(message, cause, result)
-    }
-
-    @Deprecated("use errorCode() instead")
-    fun errorServer(message: String?, cause: Throwable? = null): Nothing {
-        throw NetServerError(message, cause)
+        sendError(HttpStatus.UNAUTHORIZED)
     }
 
     fun onClean(cb: () -> Unit) {
