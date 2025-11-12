@@ -40,6 +40,7 @@ class DefaultResultSender : ResultSender {
             is HtmlTag -> context.sendHtml(result.toString())
             is XmlTag -> context.sendXml(result.toString())
             is TableModel -> context.sendJson(result.toJson().toString())
+            is Number, is Boolean -> context.sendText(result.toString())
             else -> return false
         }
         return true

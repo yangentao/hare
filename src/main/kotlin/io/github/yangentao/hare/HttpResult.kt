@@ -13,6 +13,10 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
 
     val contentLength: Int get() = content?.size ?: 0
     val isEmptyContent: Boolean get() = contentLength == 0
+    val success: Boolean get() = status.success && errorCode == 0
+
+    val errorCode: Int get() = headers[E_CODE]?.toInt() ?: 0
+    val errorMessage: String? get() = headers[E_MESSAGE]
 
     fun containsHeader(header: String): Boolean {
         for (k in headers.keys) {
@@ -25,12 +29,19 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
         const val E_CODE: String = "E_CODE"
         const val E_MESSAGE: String = "E_MESSAGE"
 
-        fun errorEx(exStatus: HttpStatus, data: String? = null, status: HttpStatus = HttpStatus.BAD_REQUEST): HttpResult {
-            return HttpResult(data?.toByteArray(), mapOf(E_CODE to exStatus.code.toString(), E_MESSAGE to exStatus.reason), status = status)
+        fun errorX(codeMessage: CodeMessage, data: Any? = null, status: HttpStatus = HttpStatus.BAD_REQUEST): HttpResult {
+            return errorX(codeMessage.message, codeMessage.code, data, status)
         }
-
-        fun error(statusCode: Int): HttpResult {
-            return HttpResult(status = HttpStatus.valueOf(statusCode))
+        fun errorX(message: String, code: Int = -1, data: Any? = null, status: HttpStatus = HttpStatus.BAD_REQUEST): HttpResult {
+            val bytes: ByteArray? = when (data) {
+                null, Unit -> null
+                is String -> data.toByteArray()
+                is Throwable -> (data.message ?: data.toString()).toByteArray()
+                is Number, is Boolean -> data.toString().toByteArray()
+                else -> data.toString().toByteArray()
+            }
+            val msg = message.lines().joinToString(", ")
+            return HttpResult(content = bytes, headers = mapOf(E_CODE to code.toString(), E_MESSAGE to msg), status = status)
         }
 
         fun error(status: HttpStatus, data: ByteArray? = null): HttpResult {
@@ -73,5 +84,19 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
             val arr = ksonArray(models) { it.toJson() }
             return json(arr, headers = headers, status = status)
         }
+    }
+}
+
+val HttpStatus.success get() = this.code in 200..299
+
+fun HttpStatus.error(message: String, code: Int = -1, data: Any?): HttpResult {
+    assert(!this.success)
+    return HttpResult.errorX(message = message, code = code, data = data, status = this)
+}
+
+class CodeMessage(val code: Int, val message: String) {
+
+    companion object {
+        val OK: CodeMessage = CodeMessage(0, "OK")
     }
 }
