@@ -31,6 +31,7 @@ interface OnHttpContext {
         return HtmlDiv(context.tagContext).apply(block)
     }
 
+    @Deprecated("use header parameter instead. X_TOTAL, X_OFFSET")
     fun JsonResult.totalOffset(total: Int, offset: Int? = null): JsonResult {
         this.put("total", total)
         this.put("offset", offset ?: offsetValue)

@@ -53,10 +53,12 @@ abstract class HttpContext() {
         sendResult(JsonFailed("未登录", code = 401))
     }
 
+    @Deprecated("use errorCode() instead")
     fun errorClient(result: JsonResult? = null, message: String? = null, cause: Throwable? = null): Nothing {
         throw NetClientError(message, cause, result)
     }
 
+    @Deprecated("use errorCode() instead")
     fun errorServer(message: String?, cause: Throwable? = null): Nothing {
         throw NetServerError(message, cause)
     }
@@ -105,6 +107,7 @@ abstract class HttpContext() {
 
     //----------
 
+    @Deprecated("use send(HttpResult) instead")
     fun sendResult(result: JsonResult) {
         sendJson(result.toString())
     }

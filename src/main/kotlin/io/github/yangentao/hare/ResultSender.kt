@@ -6,6 +6,7 @@ import io.github.yangentao.httpbasic.HttpStatus
 import io.github.yangentao.httpbasic.Mimes
 import io.github.yangentao.httpbasic.httpFile
 import io.github.yangentao.kson.JsonResult
+import io.github.yangentao.kson.KsonNull
 import io.github.yangentao.kson.KsonValue
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.sql.toJson
@@ -23,7 +24,15 @@ class DefaultResultSender : ResultSender {
 
         when (result) {
             is HttpResult -> context.send(result)
-            is JsonResult -> context.sendJson(result.toString())
+            is JsonResult -> {
+                val hr: HttpResult = if (result.OK) {
+                    HttpResult.json(result.data as? KsonValue ?: KsonNull)
+                } else {
+                    HttpResult.errorX(result.message ?: "no message", code = result.code)
+                }
+                context.send(hr)
+            }
+
             is HttpBody -> context.sendBody(result)
             is HttpStatus -> context.sendError(result)
             is String -> {
