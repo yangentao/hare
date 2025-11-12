@@ -4,7 +4,7 @@ import io.github.yangentao.sql.BaseModel
 import io.github.yangentao.sql.BaseModelClass
 import io.github.yangentao.sql.clause.*
 import io.github.yangentao.sql.fieldSQL
-import io.github.yangentao.sql.modelFieldSQL
+import io.github.yangentao.sql.fullNmeSQL
 import io.github.yangentao.types.*
 import kotlin.reflect.KProperty
 
@@ -36,7 +36,7 @@ private fun BaseModelClass<out BaseModel>.makeWhere(node: CondItem, limitNames: 
 
 private fun BaseModelClass<out BaseModel>.evalCondition(key: String, op: String, values: List<String>): Where? {
     val prop: KProperty<*> = propsHare.firstOrNull { it.fieldSQL ieq key } ?: return null
-    val lowKey = prop.modelFieldSQL
+    val lowKey = prop.fullNmeSQL
     val propClass = prop.returnType.classifier ?: return null
     when (op) {
         "nul" -> {
