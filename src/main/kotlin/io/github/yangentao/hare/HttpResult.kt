@@ -32,12 +32,17 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
         fun errorX(codeMessage: CodeMessage, data: Any? = null, status: HttpStatus = HttpStatus.BAD_REQUEST): HttpResult {
             return errorX(codeMessage.message, codeMessage.code, data, status)
         }
+
         fun errorX(message: String, code: Int = -1, data: Any? = null, status: HttpStatus = HttpStatus.BAD_REQUEST): HttpResult {
             val bytes: ByteArray? = when (data) {
                 null, Unit -> null
                 is String -> data.toByteArray()
-                is Throwable -> (data.message ?: data.toString()).toByteArray()
                 is Number, is Boolean -> data.toString().toByteArray()
+                is CodeException -> data.toString().toByteArray()
+                is Throwable -> {
+                    (data.toString() + "\n" + data.stackTraceToString()).toByteArray()
+                }
+
                 else -> data.toString().toByteArray()
             }
             val msg = message.lines().joinToString(", ")
@@ -89,7 +94,7 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
 
 val HttpStatus.success get() = this.code in 200..299
 
-fun HttpStatus.error(message: String, code: Int = -1, data: Any?): HttpResult {
+fun HttpStatus.error(message: String, code: Int = -1, data: Any? = null): HttpResult {
     assert(!this.success)
     return HttpResult.errorX(message = message, code = code, data = data, status = this)
 }

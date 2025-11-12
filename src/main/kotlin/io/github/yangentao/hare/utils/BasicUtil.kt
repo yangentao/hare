@@ -8,15 +8,15 @@ import io.github.yangentao.hare.OnHttpContext
 import io.github.yangentao.kson.JsonFailed
 import io.github.yangentao.kson.JsonResult
 import io.github.yangentao.tag.TagContext
-import io.github.yangentao.types.acceptValue
 import java.util.*
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
-import kotlin.reflect.full.createInstance
 
+@Deprecated("Do not use JsonResult. use HttpResult instead")
 val NotLogin: JsonResult get() = JsonFailed("未登录", 401)
+
+@Deprecated("Do not use JsonResult. use HttpResult instead")
 val NoPermission: JsonResult get() = JsonFailed("无权限", 403)
+
+@Deprecated("Do not use JsonResult. use HttpResult instead")
 val BadValue: JsonResult get() = JsonFailed("无效数据")
 
 inline fun <reified T : Any> T?.ifNotNull(block: (T) -> Unit): T? {

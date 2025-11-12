@@ -9,15 +9,13 @@ import io.github.yangentao.anno.userName
 import io.github.yangentao.config.ConfigList
 import io.github.yangentao.config.ConfigMap
 import io.github.yangentao.config.Configs
-import io.github.yangentao.hare.utils.blankToNull
-import io.github.yangentao.hare.utils.emptyToNull
+import io.github.yangentao.hare.utils.*
 import io.github.yangentao.hare.utils.second
 import io.github.yangentao.hare.utils.secondOrNull
-import io.github.yangentao.hare.utils.toArrayList
-import io.github.yangentao.hare.utils.toBooleanValue
 import io.github.yangentao.httpbasic.HttpFile
 import io.github.yangentao.httpbasic.HttpFileParam
 import io.github.yangentao.httpbasic.HttpMethod
+import io.github.yangentao.httpbasic.HttpStatus
 import io.github.yangentao.kson.Kson
 import io.github.yangentao.kson.KsonArray
 import io.github.yangentao.kson.KsonObject
@@ -78,7 +76,11 @@ class RouterAction(val match: UriMatch, val action: Function<Any?>, val beforeLi
             beforeList.forEach {
                 invokeKFunction(context, it, inst, mapOf(this::class to this))
             }
-            val r: Any? = if (context.commited) Unit else invokeKFunction(context, kfunction!!, inst)
+            val r: Any? = if (context.commited) {
+                Unit
+            } else {
+                invokeKFunction(context, kfunction!!, inst)
+            }
             afterList.forEach {
                 invokeKFunction(context, it, inst, mapOf(this::class to this))
             }
@@ -153,8 +155,11 @@ private fun invokeKFunction(context: HttpContext, kfun: KFunction<*>, inst: Any?
     val map = prepareParamsMap(context, kfun, inst, classValueMap)
     try {
         return kfun.callBy(map)
-    } catch (ex: java.lang.reflect.InvocationTargetException) {
-        throw ex.cause ?: ex
+    } catch (e: CodeException) {
+        return HttpResult.errorX(e.message!!, code = e.code, status = HttpStatus.INTERNAL_SERVER_ERROR)
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        return HttpResult.errorX(e.rootMessage, code = -1, data = e, status = HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }
 

@@ -2,10 +2,10 @@
 
 package io.github.yangentao.hare.utils
 
+import io.github.yangentao.types.tid
 import java.io.File
 
-@Suppress("DEPRECATION")
-val Thread.isMain: Boolean get() = if (javaVersionInt >= 19) this.threadId() == 1L else this.id == 1L
+val Thread.isMain: Boolean get() = this.tid == 1L
 
 fun AutoCloseable.closeSafe() {
     try {
@@ -22,10 +22,13 @@ inline fun <R> quiet(block: () -> R): R? {
     return null
 }
 
-@Suppress("RecursivePropertyAccessor")
 val Throwable.rootError: Throwable
     get() {
         return this.cause?.rootError ?: this
+    }
+val Throwable.rootMessage: String
+    get() {
+        return this.rootError.message ?: this.rootError.toString()
     }
 
 fun File.ensureDirs(): File {
@@ -34,5 +37,7 @@ fun File.ensureDirs(): File {
     }
     return this
 }
+
+
 
 const val HTML404 = "<!doctype html><html><head><title>test</title></head><body><center>404 No Resource Found!</center></body></html>"

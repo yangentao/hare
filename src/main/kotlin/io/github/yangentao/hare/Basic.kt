@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.yangentao.hare
 
 import io.github.yangentao.anno.userName
@@ -8,6 +10,16 @@ import kotlin.reflect.KProperty
 //[start, end]
 class FileRange(val start: Long, val end: Long) {
     val size: Long get() = end - start + 1
+}
+
+class CodeException(val code: Int, message: String) : Exception(message) {
+    override fun toString(): String {
+        return "$code , $message"
+    }
+}
+
+fun errorCode(message: String, code: Int = -1): Nothing {
+    throw CodeException(code, message)
 }
 
 class NetClientError(message: String?, cause: Throwable?, val result: JsonResult? = null) : Exception(message, cause)
@@ -34,7 +46,7 @@ class ContextAttribute<T : Any>(val onMiss: (HttpContext) -> T) {
     }
 
     operator fun setValue(thisRef: HttpContext, property: KProperty<*>, value: T) {
-        thisRef.attributes.put(property.userName, value)
+        thisRef.attributes[property.userName] = value
     }
 }
 
@@ -73,6 +85,22 @@ object HttpParameterOr {
 class HttpParameter<T : Any>(val defaultValue: T) {
     operator fun getValue(thisRef: OnHttpContext, property: KProperty<*>): T {
         val s = thisRef.context.param(property.userName) ?: return defaultValue
+        @Suppress("UNCHECKED_CAST")
+        return property.decodeValue(s) as? T ?: defaultValue
+    }
+}
+
+object HttpHeaderValueOr {
+    operator fun <T : Any> getValue(thisRef: OnHttpContext, property: KProperty<*>): T? {
+        val s = thisRef.context.requestHeader(property.userName) ?: return null
+        @Suppress("UNCHECKED_CAST")
+        return property.decodeValue(s) as? T
+    }
+}
+
+class HttpHeaderValue<T : Any>(val defaultValue: T) {
+    operator fun getValue(thisRef: OnHttpContext, property: KProperty<*>): T {
+        val s = thisRef.context.requestHeader(property.userName) ?: return defaultValue
         @Suppress("UNCHECKED_CAST")
         return property.decodeValue(s) as? T ?: defaultValue
     }
