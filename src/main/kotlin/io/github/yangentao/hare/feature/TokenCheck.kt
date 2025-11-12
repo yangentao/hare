@@ -16,7 +16,7 @@ val HttpContext.tokenValue: String?
         this.param("token")?.also { return it }
         this.requestHeader("access_token")?.also { return it }
         this.requestHeader("token")?.also { return it }
-        return requestHeader("Authorization")?.substringAfter("Bearer ", "")?.trim()
+        return requestHeader("Authorization")?.substringAfter("Bearer ", "")?.trim()?.ifEmpty { null }
     }
 var HttpContext.accountID: Long? by ContextAttributeOr
 var HttpContext.accountType: String? by ContextAttributeOr
