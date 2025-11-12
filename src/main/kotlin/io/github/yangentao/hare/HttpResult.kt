@@ -3,6 +3,7 @@
 package io.github.yangentao.hare
 
 import io.github.yangentao.hare.utils.ieq
+import io.github.yangentao.httpbasic.HttpHeader
 import io.github.yangentao.httpbasic.HttpStatus
 import io.github.yangentao.kson.KsonValue
 import io.github.yangentao.kson.ksonArray
@@ -45,7 +46,7 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
                 else -> data.toString().toByteArray()
             }
             val msg = message.lines().joinToString(", ")
-            return HttpResult(content = bytes, headers = mapOf(E_CODE to code.toString(), E_MESSAGE to msg), status = status)
+            return HttpResult(content = bytes, headers = mapOf(E_CODE to code.toString(), E_MESSAGE to msg, HttpHeader.CONTENT_TYPE to CT.PLAIN_UTF8), status = status)
         }
 
         fun error(status: HttpStatus, data: ByteArray? = null): HttpResult {

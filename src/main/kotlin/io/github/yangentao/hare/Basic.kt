@@ -16,6 +16,11 @@ class StatusException(message: String, val code: Int = -1, val status: HttpStatu
     override fun toString(): String {
         return "$code , $message"
     }
+
+    companion object {
+        var defaultStatus: HttpStatus = HttpStatus.BAD_REQUEST
+        var autoStatus: Boolean = true
+    }
 }
 
 fun errorStatus(message: String, code: Int = -1, status: HttpStatus? = null, data: Any? = null): Nothing {
@@ -23,7 +28,8 @@ fun errorStatus(message: String, code: Int = -1, status: HttpStatus? = null, dat
 }
 
 fun statusByECode(code: Int): HttpStatus {
-    return if (code in 400..599) HttpStatus.valueOf(code) else HttpStatus.BAD_REQUEST
+    if (!StatusException.autoStatus) return StatusException.defaultStatus
+    return if (code in 400..599) HttpStatus.valueOf(code) else StatusException.defaultStatus
 }
 
 object ContextAttributeOr {
