@@ -18,8 +18,8 @@ class StatusException(message: String, val code: Int = -1, val status: HttpStatu
     }
 
     companion object {
-        var defaultStatus: HttpStatus = HttpStatus.BAD_REQUEST
-        var autoStatus: Boolean = true
+        var defaultStatus: HttpStatus = HttpStatus.OK
+        var autoStatus: Boolean = false
     }
 }
 
@@ -28,8 +28,8 @@ fun errorStatus(message: String, code: Int = -1, status: HttpStatus? = null, dat
 }
 
 fun statusByECode(code: Int): HttpStatus {
-    if (!StatusException.autoStatus) return StatusException.defaultStatus
-    return if (code in 400..599) HttpStatus.valueOf(code) else StatusException.defaultStatus
+    if (StatusException.autoStatus && code in 400..599) return HttpStatus.valueOf(code)
+    return StatusException.defaultStatus
 }
 
 object ContextAttributeOr {
