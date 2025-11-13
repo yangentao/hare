@@ -9,15 +9,35 @@ import io.github.yangentao.kson.KsonValue
 import io.github.yangentao.kson.ksonArray
 import io.github.yangentao.sql.TableModel
 import io.github.yangentao.sql.toJson
+import io.github.yangentao.types.ICaseMap
 
-class HttpResult(val content: ByteArray? = null, val headers: Map<String, String> = emptyMap(), val status: HttpStatus = HttpStatus.OK) {
+class HttpResult(val content: ByteArray? = null, val status: HttpStatus = HttpStatus.OK, contentType: String? = null) {
+    val headers: ICaseMap<String> = ICaseMap()
+    var contentType: String?
+        get() = headers[HttpHeader.CONTENT_TYPE]
+        set(value) {
+            if (value.isNullOrEmpty()) headers.remove(HttpHeader.CONTENT_TYPE) else headers[HttpHeader.CONTENT_TYPE] = value
+        }
+
+    init {
+        headers[HttpHeader.CONTENT_LENGTH] = (content?.size ?: 0).toString()
+        if (contentType != null && contentType.isNotEmpty()) this.contentType = contentType
+    }
 
     val contentLength: Int get() = content?.size ?: 0
     val isEmptyContent: Boolean get() = contentLength == 0
-    val success: Boolean get() = status.success && errorCode == 0
+    val success: Boolean get() = status.success && (errorCode == null || errorCode == 0)
 
-    val errorCode: Int get() = headers[E_CODE]?.toInt() ?: 0
-    val errorMessage: String? get() = headers[E_MESSAGE]
+    var errorCode: Int?
+        get() = headers[E_CODE]?.toInt()
+        set(value) {
+            if (value == null) headers.remove(E_CODE) else headers[E_CODE] = value.toString()
+        }
+    var errorMessage: String?
+        get() = headers[E_MESSAGE]
+        set(value) {
+            if (value == null || value.isEmpty()) headers.remove(E_MESSAGE) else headers[E_MESSAGE] = value
+        }
 
     fun containsHeader(header: String): Boolean {
         for (k in headers.keys) {
@@ -39,22 +59,23 @@ class HttpResult(val content: ByteArray? = null, val headers: Map<String, String
                 null, Unit -> null
                 is String -> data.toByteArray()
                 is Number, is Boolean -> data.toString().toByteArray()
-                is StatusException -> (data.code.toString() + "," + data.message).toByteArray()
                 is Throwable -> (data.toString() + "\n" + data.stackTraceToString()).toByteArray()
                 is KsonValue -> data.toString().toByteArray()
                 is TableModel -> data.toJson().toString().toByteArray()
                 else -> data.toString().toByteArray()
             }
-            val msg = message.lines().joinToString(", ")
-            return HttpResult(content = bytes, headers = mapOf(E_CODE to code.toString(), E_MESSAGE to msg, HttpHeader.CONTENT_TYPE to CT.PLAIN_UTF8), status = status)
+            return HttpResult(content = bytes, contentType = CT.PLAIN_UTF8, status = status).also {
+                it.errorCode = code
+                it.errorMessage = message.lines().joinToString(", ")
+            }
         }
 
-        fun error(status: HttpStatus, data: ByteArray? = null): HttpResult {
-            return HttpResult(content = data, status = status)
+        fun error(status: HttpStatus, data: ByteArray? = null, contentType: String? = CT.PLAIN_UTF8): HttpResult {
+            return HttpResult(content = data, contentType = contentType, status = status)
         }
 
         fun content(content: ByteArray, contentType: String, vararg headers: Pair<String, String>, status: HttpStatus = HttpStatus.OK): HttpResult {
-            return HttpResult(content, mapOf("Content-Type" to contentType, *headers), status)
+            return HttpResult(content = content, status = status, contentType = contentType).also { it.headers.putAll(headers) }
         }
 
         fun binary(data: ByteArray, contentType: String, vararg headers: Pair<String, String>, status: HttpStatus = HttpStatus.OK): HttpResult {
@@ -104,4 +125,32 @@ class CodeMessage(val code: Int, val message: String) {
     companion object {
         val OK: CodeMessage = CodeMessage(0, "OK")
     }
+}
+
+class StatusException(val result: HttpResult) : Exception() {
+    override fun toString(): String {
+        return "StatusException: ${result.status}, ${result.errorCode} ${result.errorMessage}"
+    }
+
+    companion object {
+        var defaultStatus: HttpStatus = HttpStatus.OK
+        var autoStatus: Boolean = false
+    }
+}
+
+fun errorStatus(status: HttpStatus, data: ByteArray? = null, contentType: String? = CT.PLAIN_UTF8): Nothing {
+    throw StatusException(HttpResult.error(status = status, data = data, contentType = contentType))
+}
+
+fun errorStatus(message: String, code: Int = -1, status: HttpStatus = StatusException.defaultStatus, data: Any? = null): Nothing {
+    throw StatusException(HttpResult.errorX(message = message, code = code, status = status, data = data))
+}
+
+fun errorStatus(codeMessage: CodeMessage, status: HttpStatus = StatusException.defaultStatus, data: Any? = null): Nothing {
+    throw StatusException(HttpResult.errorX(message = codeMessage.message, code = codeMessage.code, status = status, data = data))
+}
+
+fun statusByECode(code: Int): HttpStatus {
+    if (StatusException.autoStatus && code in 400..599) return HttpStatus.valueOf(code)
+    return StatusException.defaultStatus
 }

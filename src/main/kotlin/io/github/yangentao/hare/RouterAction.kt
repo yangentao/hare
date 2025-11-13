@@ -163,7 +163,7 @@ private fun invokeKFunction(context: HttpContext, kfun: KFunction<*>, inst: Any?
     try {
         return kfun.callBy(map)
     } catch (e: StatusException) {
-        return HttpResult.errorX(e.message!!, code = e.code, status = e.status, data = e.data)
+        return e.result
     } catch (e: Throwable) {
         e.printStackTrace()
         return HttpResult.errorX(e.rootMessage, code = -1, status = HttpStatus.INTERNAL_SERVER_ERROR, data = e)

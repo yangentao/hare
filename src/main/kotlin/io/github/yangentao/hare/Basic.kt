@@ -3,33 +3,12 @@
 package io.github.yangentao.hare
 
 import io.github.yangentao.anno.userName
-import io.github.yangentao.httpbasic.HttpStatus
 import io.github.yangentao.types.decodeValue
 import kotlin.reflect.KProperty
 
 //[start, end]
 class FileRange(val start: Long, val end: Long) {
     val size: Long get() = end - start + 1
-}
-
-class StatusException(message: String, val code: Int = -1, val status: HttpStatus = statusByECode(code), val data: Any? = null) : Exception(message) {
-    override fun toString(): String {
-        return "$code , $message"
-    }
-
-    companion object {
-        var defaultStatus: HttpStatus = HttpStatus.OK
-        var autoStatus: Boolean = false
-    }
-}
-
-fun errorStatus(message: String, code: Int = -1, status: HttpStatus? = null, data: Any? = null): Nothing {
-    throw StatusException(message, code, status ?: statusByECode(code), data)
-}
-
-fun statusByECode(code: Int): HttpStatus {
-    if (StatusException.autoStatus && code in 400..599) return HttpStatus.valueOf(code)
-    return StatusException.defaultStatus
 }
 
 object ContextAttributeOr {
