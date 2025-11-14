@@ -35,7 +35,6 @@ class HttpApp(
     var onAuthFailed: ((HttpContext) -> Boolean)? = null
 
     val attrStore = AttrStore()
-    val taskPool = TaskPool()
 
     val cleanList: ArrayList<AppCleaner> = ArrayList()
     val taskList: ArrayList<AppTask> = ArrayList()
@@ -71,7 +70,7 @@ class HttpApp(
     }
 
     fun destroy() {
-        taskPool.close()
+        Tasks.close()
         for (t in taskList) {
             safe {
                 t.onDetach()
@@ -105,7 +104,7 @@ class HttpApp(
     }
 
     fun every(time: TimeValue, block: () -> Unit) {
-        taskPool.fixedDelay(time, block)
+        Tasks.fixedDelay(time, block)
     }
 
     fun migrate(vararg clses: KClass<out TableModel>) {

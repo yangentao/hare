@@ -4,6 +4,7 @@ package io.github.yangentao.hare
 
 import io.github.yangentao.types.DateTime
 import io.github.yangentao.types.MIN_MILLS
+import io.github.yangentao.types.Tasks
 import io.github.yangentao.types.safe
 import java.util.concurrent.ScheduledFuture
 
@@ -25,20 +26,20 @@ abstract class AppTask(val app: HttpApp) : Runnable {
 abstract class DelayAppTask(app: HttpApp, val delay: Long) : AppTask(app) {
 
     override fun onAttach() {
-        fu = app.taskPool.delayMill(delay, this)
+        fu = Tasks.delayMill(delay, this)
     }
 
 }
 
 abstract class FixRateAppTask(app: HttpApp, val delay: Long) : AppTask(app) {
     override fun onAttach() {
-        fu = app.taskPool.fixedRateMill(delay, this)
+        fu = Tasks.fixedRateMill(delay, this)
     }
 }
 
 abstract class FixDelayAppTask(app: HttpApp, val delay: Long) : AppTask(app) {
     override fun onAttach() {
-        fu = app.taskPool.fixedDelayMill(delay, this)
+        fu = Tasks.fixedDelayMill(delay, this)
     }
 
 }
@@ -57,7 +58,7 @@ class EveryMinuteTask(app: HttpApp) : AppTask(app) {
     }
 
     override fun onAttach() {
-        fu = app.taskPool.fixedRateMill(1.MIN_MILLS, this)
+        fu = Tasks.fixedRateMill(1.MIN_MILLS, this)
     }
 
     override fun onDetach() {
