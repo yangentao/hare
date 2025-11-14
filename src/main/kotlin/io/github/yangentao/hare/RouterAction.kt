@@ -71,7 +71,7 @@ class RouterAction(
             lambda = action as LambdaAction
         }
         ownerObject = kfunction?.ownerObject
-        ownerClass = kfunction?.ownerClass
+        ownerClass = group ?: kfunction?.ownerClass
         actionAnnotations = kfunction?.annotations ?: emptyList()
         allAnnos = actionAnnotations + groupAnnotations
         actionAnno = kfunction?.findAnnotation()
