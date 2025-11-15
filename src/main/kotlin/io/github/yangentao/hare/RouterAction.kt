@@ -21,6 +21,7 @@ import io.github.yangentao.kson.KsonArray
 import io.github.yangentao.kson.KsonObject
 import io.github.yangentao.types.*
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.nio.charset.Charset
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -162,8 +163,15 @@ private fun invokeKFunction(context: HttpContext, kfun: KFunction<*>, inst: Any?
     val map = prepareParamsMap(context, kfun, inst, classValueMap)
     try {
         return kfun.callBy(map)
-    } catch (e: StatusException) {
-        return e.result
+
+    } catch (e: InvocationTargetException) {
+        val cau = e.cause
+        if (cau is StatusException) {
+            return cau.result
+        } else {
+            e.printStackTrace()
+            return HttpResult.errorX(e.rootMessage, code = -1, status = HttpStatus.INTERNAL_SERVER_ERROR, data = e)
+        }
     } catch (e: Throwable) {
         e.printStackTrace()
         return HttpResult.errorX(e.rootMessage, code = -1, status = HttpStatus.INTERNAL_SERVER_ERROR, data = e)

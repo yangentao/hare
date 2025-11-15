@@ -2,6 +2,7 @@
 
 package io.github.yangentao.hare
 
+import io.github.yangentao.hare.utils.encodedURL
 import io.github.yangentao.hare.utils.ieq
 import io.github.yangentao.httpbasic.HttpHeader
 import io.github.yangentao.httpbasic.HttpStatus
@@ -36,7 +37,7 @@ class HttpResult(val content: ByteArray? = null, val status: HttpStatus = HttpSt
     var errorMessage: String?
         get() = headers[E_MESSAGE]
         set(value) {
-            if (value == null || value.isEmpty()) headers.remove(E_MESSAGE) else headers[E_MESSAGE] = value
+            if (value == null || value.isEmpty()) headers.remove(E_MESSAGE) else headers[E_MESSAGE] = value.encodedURL
         }
 
     fun containsHeader(header: String): Boolean {
@@ -59,14 +60,15 @@ class HttpResult(val content: ByteArray? = null, val status: HttpStatus = HttpSt
                 null, Unit -> null
                 is String -> data.toByteArray()
                 is Number, is Boolean -> data.toString().toByteArray()
-                is Throwable -> (data.toString() + "\n" + data.stackTraceToString()).toByteArray()
+                is StatusException -> data.message?.toByteArray()
                 is KsonValue -> data.toString().toByteArray()
                 is TableModel -> data.toJson().toString().toByteArray()
+                is Throwable -> (data.toString() + "\n" + data.stackTraceToString()).toByteArray()
                 else -> data.toString().toByteArray()
             }
             return HttpResult(content = bytes, contentType = CT.PLAIN_UTF8, status = status).also {
                 it.errorCode = code
-                it.errorMessage = message.lines().joinToString(", ")
+                it.errorMessage = message
             }
         }
 
