@@ -85,5 +85,23 @@ class SessionTable : TableModel() {
             return uuid
         }
 
+        fun tokensOf(userId: Long): List<String> {
+            val ls: List<SessionTable> = SessionTable.list(SessionTable::accId EQ userId)
+            return ls.filter { !it.expired }.map { it.token }
+        }
+
     }
+}
+
+// TODO 放到SessionTable文件中
+fun userToTokens(userId: Long): List<String> {
+    return SessionTable.tokensOf(userId)
+}
+
+fun tokenToUser(token: String): Long? {
+    val st = SessionTable.one(SessionTable::token EQ token)
+    if (st == null || st.expired) {
+        return null
+    }
+    return st.accId
 }
