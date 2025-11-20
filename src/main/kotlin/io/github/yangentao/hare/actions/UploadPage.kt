@@ -10,6 +10,7 @@ import io.github.yangentao.httpbasic.HttpFile
 import io.github.yangentao.httpbasic.HttpFileParam
 import io.github.yangentao.sql.clause.DESC
 import io.github.yangentao.sql.clause.ORDER_BY
+import io.github.yangentao.sql.clause.Where
 import io.github.yangentao.types.printX
 import io.github.yangentao.xlog.logd
 import java.io.File
@@ -57,7 +58,7 @@ class UploadPage(val context: HttpContext) {
 
     @Action
     fun dump(): String {
-        val ls = Upload.list(null) { ORDER_BY(Upload::uploadTime.DESC) }
+        val ls = Upload.list(Where("1=1")) { ORDER_BY(Upload::uploadTime.DESC) }
         for (item in ls) {
             printX(item.ident, " ", item.size, " ", item.rawName, " ", item.localName, " ", item.md5, item.mime)
         }

@@ -48,9 +48,10 @@ interface OnHttpContext {
 
     fun BaseModelClass<out BaseModel>.listByQuery(vararg conditions: Where): JsonResult {
         val pkProp = this.tableClass.primaryKeysHare.firstOrNull()
-        val w = AND_ALL(*conditions, this.queryConditions(context.param("q"), this.fieldNames()))
+        val qw = this.queryConditions(context.param("q"), this.fieldNames())
+        val w: Where = if (qw == null) AND_ALL(*conditions) else AND_ALL(*conditions, qw)
         val ls = this.list(w) {
-            orderByCTX(pkProp?.ASC)
+            orderByCTX(pkProp?.ASC?.sql)
             limitByCTX()
         }
         val total: Int = this.count("*", w)

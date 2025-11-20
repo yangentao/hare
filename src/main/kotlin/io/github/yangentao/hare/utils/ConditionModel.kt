@@ -23,12 +23,12 @@ private fun BaseModelClass<out BaseModel>.makeWhere(node: CondItem, limitNames: 
         }
 
         is AndCond -> {
-            val ls = node.items.map { makeWhere(it, limitNames, nameMap) }
+            val ls = node.items.mapNotNull { makeWhere(it, limitNames, nameMap) }
             return AND_ALL(ls)
         }
 
         is OrCond -> {
-            val ls = node.items.map { makeWhere(it, limitNames, nameMap) }
+            val ls = node.items.mapNotNull { makeWhere(it, limitNames, nameMap) }
             return OR_ALL(ls)
         }
     }
